@@ -30,7 +30,7 @@ import {
       return res.status(HttpStatus.OK).json(result);
     }
   
-    @UseGuards(AuthGuard('local'))
+     @UseGuards(AuthGuard('local'))
     @Post('login')
     public async login(@Response() res, @Body() login: LoginUserDto) {
       const user = await this.usersService.findByEmail(login.email);
