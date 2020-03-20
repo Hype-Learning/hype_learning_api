@@ -9,4 +9,5 @@ import { Course } from './course.entity';
   controllers: [CoursesController],
   providers: [CoursesService]
 })
-export class CoursesModule {}
+export class CoursesModule {
+}

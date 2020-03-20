@@ -2,17 +2,20 @@ import { Controller, Post, Body, Get, Param, Delete, Put } from '@nestjs/common'
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { Course } from './course.entity';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 
+@ApiTags('courses')
 @Controller('courses')
 export class CoursesController {
     constructor(private coursesService: CoursesService)
     {}
 
     @Post()
-    create(@Body('course') createCourseDto: CreateCourseDto): Promise<Course> {
+    create(@Body() createCourseDto: CreateCourseDto): Promise<Course> {
         return this.coursesService.create(createCourseDto);
     }
 
+    @ApiResponse({ status: 200, description: 'Return all articles.'})
     @Get()
     findAll(): Promise<Course[]> {
         return this.coursesService.findAll();
@@ -24,7 +27,7 @@ export class CoursesController {
     }
 
     @Put(':id')
-    update(@Param('id') id, @Body('course') courseData: CreateCourseDto){
+    update(@Param('id') id, @Body() courseData: CreateCourseDto){
         return this.coursesService.update(id, courseData);
     }
 

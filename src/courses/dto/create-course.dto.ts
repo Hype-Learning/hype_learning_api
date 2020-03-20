@@ -1,5 +1,11 @@
+import { IsString } from "class-validator";
+
 export class CreateCourseDto {
-    title: string;
-    description: string;
-    announcement: string;
+
+    @IsString()
+    readonly title: string;
+    @IsString()
+    readonly description: string;
+    @IsString()
+    readonly announcement: string;
 }
