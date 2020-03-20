@@ -9,13 +9,13 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     ConfigModule.forRoot({
       load: [configuration],
       validationSchema: Joi.object({
-        DB_TYPE: Joi.string().default('postgres'),
-        DB_HOST: Joi.string().default('localhost'),
-        DB_PORT: Joi.number().default(5432),
-        DB_USERNAME: Joi.string().default('postgres'),
-        DB_PASSWORD: Joi.string().default('postgres'),
-        DB_DATABASE: Joi.string().default('hype_learning'),
-        DB_SYNCHRONIZE: Joi.bool().default('true'),
+        DB_TYPE: Joi.string().default(process.env.DB_TYPE),
+        DB_HOST: Joi.string().default(process.env.DB_HOST),
+        DB_PORT: Joi.number().default(process.env.DB_PORT),
+        DB_USERNAME: Joi.string().default(process.env.DB_USERNAME),
+        DB_PASSWORD: Joi.string().default(process.env.DB_PASSWORD),
+        DB_DATABASE: Joi.string().default(process.env.DB_DATABASE),
+        DB_SYNCHRONIZE: Joi.bool().default(process.env.DB_SYNCHRONIZE),
 
 
       }),
