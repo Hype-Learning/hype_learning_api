@@ -16,7 +16,7 @@ import { DbConfigService } from './config/database/config.service';
         type: 'postgres',
         host: dbConfigService.host,
         port: dbConfigService.port,
-        username: 'postgres',
+        username: dbConfigService.username,
         password: dbConfigService.password,
         database: dbConfigService.database,
         entities: [__dirname + '/**/*.entity{.ts,.js}'],
