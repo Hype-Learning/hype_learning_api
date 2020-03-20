@@ -2,7 +2,7 @@ import { Controller, Post, Body, Get, Param, Delete, Put } from '@nestjs/common'
 import { CoursesService } from './courses.service';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { Course } from './course.entity';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiResponse } from '@nestjs/swagger';
 
 @ApiTags('courses')
 @Controller('courses')
