@@ -9,7 +9,7 @@ export class CoursesController {
     {}
 
     @Post()
-    create(@Body() createCourseDto: CreateCourseDto): Promise<Course> {
+    create(@Body('course') createCourseDto: CreateCourseDto): Promise<Course> {
         return this.coursesService.create(createCourseDto);
     }
 
