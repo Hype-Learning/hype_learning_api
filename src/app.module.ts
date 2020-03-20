@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from "@nestjs/typeorm";
-import { AuthzModule } from './authz/authz.module';
 import { CoursesModule } from './courses/courses.module';
 import { AppConfigModule } from './config/app/config.module';
 import { DbConfigModule } from "./config/database/config.module";
 import { DbConfigService } from './config/database/config.service';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
 
 
 
@@ -26,8 +27,10 @@ import { DbConfigService } from './config/database/config.service';
     }),
     AppConfigModule,
     DbConfigModule,
-    AuthzModule,
-    CoursesModule
+    AuthModule,
+    UsersModule,
+    CoursesModule,
+
   ],
   controllers: [],
   providers: [],

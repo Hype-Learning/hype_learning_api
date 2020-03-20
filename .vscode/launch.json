@@ -6,12 +6,16 @@
     "configurations": [
         {
             "type": "node",
-            "request": "attach",
-            "name": "Attach",
-            "port": 9229,
+            "request": "launch",
+            "name": "Launch Program",
+            "program": "${workspaceFolder}/src/main.ts",
+            "preLaunchTask": "tsc: watch - tsconfig.build.json",
+            "outFiles": ["${workspaceFolder}/dist/**/*.js"],
             "skipFiles": [
-                "<node_internals>/**"
+              "${workspaceFolder}//node_modules/**/*.js",
+              "<node_internals>/**/*.js"
             ]
-        },
+          }
+
     ]
 }
