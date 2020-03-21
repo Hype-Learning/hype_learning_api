@@ -1,46 +1,22 @@
-import {
-    Controller,
-    UseGuards,
-    HttpStatus,
-    Response,
-    Post,
-    Body,
-  } from '@nestjs/common';
-  import { ApiTags } from '@nestjs/swagger';
-  import { AuthService } from './auth.service';
-  import { UsersService } from 'src/users/users.service';
-  import { CreateUserDto } from '../users/dto/create-user.dto';
-  import { LoginUserDto } from '../users/dto/login-user.dto';
-  import { AuthGuard } from '@nestjs/passport';
-  
-  @ApiTags('auth')
-  @Controller('auth')
-  export class AuthController {
-    constructor(
-      private readonly authService: AuthService,
-      private readonly usersService: UsersService,
-    ) {}
-  
-    @Post('register')
-    public async register(@Response() res, @Body() createUserDto: CreateUserDto) {
-      const result = await this.authService.register(createUserDto);
-      if (!result.success) {
-        return res.status(HttpStatus.BAD_REQUEST).json(result);
-      }
-      return res.status(HttpStatus.OK).json(result);
+import { Controller, Body, ValidationPipe, Post, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { AuthService } from './auth.service';
+import { CredentialsDto } from './dto/credentials.dto';
+import { User } from '../users/user.entity';
+import { ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Authorization')
+@Controller('auth')
+export class AuthController {
+    constructor(private authService: AuthService){}
+
+    @Post('/signup')
+    @UseInterceptors(ClassSerializerInterceptor)
+    signUp(@Body(ValidationPipe) credentialsDto: CredentialsDto): Promise<User> {
+        return this.authService.signUp(credentialsDto);
     }
-  
-     @UseGuards(AuthGuard('local'))
-    @Post('login')
-    public async login(@Response() res, @Body() login: LoginUserDto) {
-      const user = await this.usersService.findByEmail(login.email);
-      if (!user) {
-        res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({
-          message: 'User Not Found',
-        });
-      } else {
-        const token = this.authService.createToken(user);
-        return res.status(HttpStatus.OK).json(token);
-      }
+
+    @Post('/signin')
+    signIn(@Body(ValidationPipe) credentialsDto: CredentialsDto): Promise<{ accessToken: string }> {
+        return this.authService.signIn(credentialsDto);
     }
-  }
+}

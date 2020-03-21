@@ -2,14 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
-import { AppConfigService } from './config/app/config.service';
+
+
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
     logger: ['log','error','debug','verbose', 'warn'
     ]
   });
-  const appConfig: AppConfigService = app.get('AppConfigService');
   app.enableCors();
   app.useGlobalPipes(
     new ValidationPipe({

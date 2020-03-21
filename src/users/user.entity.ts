@@ -1,40 +1,31 @@
 /* eslint-disable @typescript-eslint/no-inferrable-types */
-import { Column, Entity, PrimaryGeneratedColumn, BeforeInsert } from "typeorm";
-import { IsNotEmpty, IsEmail } from "class-validator";
+import { BaseEntity, PrimaryGeneratedColumn, Column, Entity, Unique,  } from "typeorm";
+import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
-import { UserRO } from "./user.ro";
+import { ApiProperty } from "@nestjs/swagger";
+
 @Entity()
-export class User {
+@Unique(['email'])
+export class User extends BaseEntity {
 
-    @PrimaryGeneratedColumn()
-    id: number;
+  @PrimaryGeneratedColumn()
+  @ApiProperty()
+  id: number;
 
-    @Column()
-    @IsEmail()
-    email: string;
+  @Column()
+  @ApiProperty()
+  email: string;
 
-    @Column()
-    @IsNotEmpty()
-    password: string;
+  @Column()
+  @Exclude()
+  password: string;
 
-    @BeforeInsert()
-    async hashPassword() {
-        this.password = await bcrypt.hash(this.password, 10);
-    }
+  @Column()
+  @Exclude()
+  salt: string;
 
-    async comparePassword(attempt: string): Promise<boolean> {
-        return await bcrypt.compare(attempt, this.password);
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-inferrable-types
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    toResponseObject(showToken: boolean = true): UserRO {
-        const { id, email } = this;
-        const responseObject: UserRO = {
-          id,
-          email,
-        };
-    
-        return responseObject;
-      }
+  async validatePassword(password: string): Promise<boolean> {
+      const hash = await bcrypt.hash(password, this.salt);
+      return hash === this.password
+  }
 }
