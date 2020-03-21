@@ -13,7 +13,7 @@ import { UserRepository } from 'src/users/user.repository';
 @Module({
   imports: [
     UsersModule,
-    PassportModule.register( {defaultStrategy: 'jwt '}),
+    PassportModule.register( { defaultStrategy: 'jwt' }),
     AppConfigModule,
     TypeOrmModule.forFeature([UserRepository]),
     JwtModule.registerAsync({

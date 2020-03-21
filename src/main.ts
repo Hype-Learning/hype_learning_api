@@ -22,6 +22,7 @@ async function bootstrap() {
   .setDescription('The HypE-Learning API description')
   .setVersion('1.0')
   .addTag('hype_learning')
+  .addBearerAuth()
   .build();
 
   const document = SwaggerModule.createDocument(app, options);

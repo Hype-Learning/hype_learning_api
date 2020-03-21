@@ -3,9 +3,13 @@ import { UsersService } from './users.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersController } from './users.controller';
 import { UserRepository } from './user.repository';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([UserRepository])],
+  imports: [
+    PassportModule.register( {defaultStrategy: 'jwt' }),
+    TypeOrmModule.forFeature([UserRepository])
+  ],
   controllers: [UsersController],
   providers: [UsersService],
   exports: [UsersService,TypeOrmModule],
