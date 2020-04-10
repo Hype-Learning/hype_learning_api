@@ -5,6 +5,8 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { Course } from './course.entity';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from 'src/common/guards/roles.guard';
+import { User } from 'src/users/user.decorator';
+import { User } from 'src/users/user.entity';
 
 @ApiTags('courses')
 @Controller('courses')
@@ -15,7 +17,7 @@ export class CoursesController {
     @UseGuards(RolesGuard)
     @SetMetadata('roles', ['admin', 'instructor'])
     @Post()
-    create(@Body() createCourseDto: CreateCourseDto): Promise<Course> {
+    create(@Body() createCourseDto: CreateCourseDto, @User() user: User): Promise<Course> {
         return this.coursesService.create(createCourseDto);
     }
 
