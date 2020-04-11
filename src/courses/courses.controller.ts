@@ -30,7 +30,8 @@ export class CoursesController {
 
   @ApiResponse({ status: 200, description: 'Return all courses.' })
   @Get()
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor', 'student'])
   findAll(): Promise<Course[]> {
     return this.coursesService.findAll();
   }
