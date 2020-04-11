@@ -21,8 +21,8 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 export class CoursesController {
   constructor(private coursesService: CoursesService) {}
 
-  @UseGuards(RolesGuard)
-  // @SetMetadata('roles', ['admin', 'instructor'])
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor'])
   @Post()
   create(@Body() createCourseDto: CreateCourseDto): Promise<Course> {
     return this.coursesService.create(createCourseDto);

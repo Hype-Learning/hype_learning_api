@@ -5,10 +5,12 @@ import {
   Column,
   Entity,
   Unique,
+  OneToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
+import { Course } from 'src/courses/course.entity';
 
 @Entity()
 @Unique(['email'])
@@ -32,6 +34,12 @@ export class User extends BaseEntity {
   @Column()
   @ApiProperty()
   role: string;
+
+  @OneToMany(
+    type => Course,
+    course => course.author,
+  )
+  courses: Course[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);
