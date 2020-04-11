@@ -8,6 +8,8 @@ import {
   Put,
   UseGuards,
   SetMetadata,
+  ClassSerializerInterceptor,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { CoursesService } from './courses.service';
@@ -15,17 +17,23 @@ import { CreateCourseDto } from './dto/create-course.dto';
 import { Course } from './course.entity';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from 'src/common/guards/roles.guard';
-
+import { GetUser } from 'src/users/user.decorator';
+import { User } from 'src/users/user.entity';
 @ApiTags('courses')
 @Controller('courses')
 export class CoursesController {
   constructor(private coursesService: CoursesService) {}
 
-  @UseGuards(AuthGuard(), RolesGuard)
-  @SetMetadata('roles', ['admin', 'instructor'])
+  @ApiResponse({ status: 201, description: 'Create a course' })
   @Post()
-  create(@Body() createCourseDto: CreateCourseDto): Promise<Course> {
-    return this.coursesService.create(createCourseDto);
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor'])
+  @UseInterceptors(ClassSerializerInterceptor)
+  create(
+    @Body() createCourseDto: CreateCourseDto,
+    @GetUser() user: User,
+  ): Promise<Course> {
+    return this.coursesService.create(createCourseDto, user);
   }
 
   @ApiResponse({ status: 200, description: 'Return all courses.' })

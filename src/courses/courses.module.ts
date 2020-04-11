@@ -4,13 +4,16 @@ import { CoursesService } from './courses.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Course } from './course.entity';
 import { PassportModule } from '@nestjs/passport';
+import { AuthModule } from 'src/auth/auth.module';
+import { User } from 'src/users/user.entity';
 
 @Module({
   imports: [
-    PassportModule.register( { defaultStrategy: 'jwt' }),
-    TypeOrmModule.forFeature([Course])],
+    PassportModule.register({ defaultStrategy: 'jwt' }),
+    TypeOrmModule.forFeature([Course, User]),
+    AuthModule,
+  ],
   controllers: [CoursesController],
-  providers: [CoursesService]
+  providers: [CoursesService],
 })
-export class CoursesModule {
-}
+export class CoursesModule {}

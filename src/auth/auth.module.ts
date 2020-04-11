@@ -13,7 +13,7 @@ import { UserRepository } from 'src/users/user.repository';
 @Module({
   imports: [
     UsersModule,
-    PassportModule.register( { defaultStrategy: 'jwt' }),
+    PassportModule.register({ defaultStrategy: 'jwt' }),
     AppConfigModule,
     TypeOrmModule.forFeature([UserRepository]),
     JwtModule.registerAsync({
@@ -22,12 +22,11 @@ import { UserRepository } from 'src/users/user.repository';
         secret: appConfigService.secret,
         signOptions: { expiresIn: 3600 },
       }),
-      inject: [AppConfigService]
-
+      inject: [AppConfigService],
     }),
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy],
-  exports: [AuthService, JwtStrategy],
+  exports: [AuthService, JwtStrategy, PassportModule, JwtModule],
 })
 export class AuthModule {}
