@@ -51,7 +51,7 @@ export class CoursesController {
     return this.coursesService.findOne(id);
   }
 
-  @UseGuards(RolesGuard)
+  @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor'])
   @Put(':id')
   update(@Param('id') id, @Body() courseData: CreateCourseDto) {
