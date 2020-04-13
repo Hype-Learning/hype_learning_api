@@ -1,39 +1,36 @@
-import { Module } from '@nestjs/common';
-import { TypeOrmModule } from "@nestjs/typeorm";
-import { AuthzModule } from './authz/authz.module';
+import { Module, DynamicModule } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import { CoursesModule } from './courses/courses.module';
 import { AppConfigModule } from './config/app/config.module';
-import { DbConfigModule } from "./config/database/config.module";
+import { DbConfigModule } from './config/database/config.module';
 import { DbConfigService } from './config/database/config.service';
+import { AuthModule } from './auth/auth.module';
+import { UsersModule } from './users/users.module';
+import { TopicsModule } from './topics/topics.module';
+import * as ormconfig from './ormconfig';
 
+export function DatabaseOrmModule(): DynamicModule {
+  // we could load the configuration from dotEnv here,
+  // but typeORM cli would not be able to find the configuration file.
 
+  return TypeOrmModule.forRoot(ormconfig);
+}
 
 @Module({
   imports: [
-    TypeOrmModule.forRootAsync({
-      imports: [DbConfigModule],
-      useFactory: (dbConfigService: DbConfigService) => ({
-        type: 'postgres',
-        host: dbConfigService.host,
-        port: dbConfigService.port,
-        username: dbConfigService.username,
-        password: dbConfigService.password,
-        database: dbConfigService.database,
-        entities: [__dirname + '/**/*.entity{.ts,.js}'],
-        synchronize: dbConfigService.synchronize,
-      }),
-      inject: [DbConfigService]
-    }),
+    TypeOrmModule.forRoot(ormconfig),
     AppConfigModule,
     DbConfigModule,
-    AuthzModule,
-    CoursesModule
+    AuthModule,
+    UsersModule,
+    CoursesModule,
+    TopicsModule,
   ],
   controllers: [],
   providers: [],
 })
 export class AppModule {
-  constructor(private dbConfigService2: DbConfigService){
-    console.log(dbConfigService2.username);
+  constructor(private dbConfigService: DbConfigService) {
+    console.log(dbConfigService.username);
   }
 }
