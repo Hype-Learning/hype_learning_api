@@ -4,10 +4,12 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  ManyToMany,
 } from 'typeorm';
 import { IsString, MaxLength, IsNotEmpty } from 'class-validator';
-import { User } from 'src/users/user.entity';
 import { Topic } from 'src/topics/topic.entity';
+import { Instructor } from 'src/users/instructor.entity';
+import { Student } from 'src/users/student.entity';
 @Entity()
 export class Course {
   @PrimaryGeneratedColumn()
@@ -32,10 +34,16 @@ export class Course {
   announcement: string;
 
   @ManyToOne(
-    type => User,
-    user => user.courses,
+    type => Instructor,
+    instructor => instructor.courses,
   )
-  author: User;
+  author: Instructor;
+
+  @ManyToMany(
+    type => Student,
+    student => student.courses
+  )
+  participants: Student[];
 
   @OneToMany(
     type => Topic,
