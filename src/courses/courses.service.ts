@@ -4,7 +4,7 @@ import { Course } from './course.entity';
 import { Repository } from 'typeorm';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { User } from 'src/users/user.entity';
-import { CourseRO } from './dto/course.ro';
+import { Topic } from 'src/topics/topic.entity';
 
 @Injectable()
 export class CoursesService {
@@ -35,6 +35,13 @@ export class CoursesService {
 
   async findAll(): Promise<Course[]> {
     return this.coursesRepository.find();
+  }
+
+  async findAllTopics(id: string): Promise<Topic[]> {
+    const course = await this.coursesRepository.findOne(id);
+    const topics = course.topics;
+
+    return topics;
   }
 
   findOne(id: string): Promise<Course> {

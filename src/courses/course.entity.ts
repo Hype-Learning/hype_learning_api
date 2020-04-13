@@ -1,6 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { IsString, MaxLength, IsNotEmpty } from 'class-validator';
 import { User } from 'src/users/user.entity';
+import { Topic } from 'src/topics/topic.entity';
 @Entity()
 export class Course {
   @PrimaryGeneratedColumn()
@@ -29,6 +36,12 @@ export class Course {
     user => user.courses,
   )
   author: User;
+
+  @OneToMany(
+    type => Topic,
+    topic => topic.course,
+  )
+  topics: Topic[];
 
   //list of topics
 

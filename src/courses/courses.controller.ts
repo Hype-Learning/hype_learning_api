@@ -19,6 +19,7 @@ import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { GetUser } from 'src/users/user.decorator';
 import { User } from 'src/users/user.entity';
+import { Topic } from 'src/topics/topic.entity';
 @ApiTags('courses')
 @Controller('courses')
 export class CoursesController {
@@ -42,6 +43,14 @@ export class CoursesController {
   @SetMetadata('roles', ['admin', 'instructor', 'student'])
   findAll(): Promise<Course[]> {
     return this.coursesService.findAll();
+  }
+
+  @ApiResponse({ status: 200, description: 'Return all topics for the course' })
+  @Get(':id/topics')
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor', 'student'])
+  findAllTopics(@Param('id') id: string): Promise<Topic[]> {
+    return this.coursesService.findAllTopics(id);
   }
 
   // @UseGuards(RolesGuard)
