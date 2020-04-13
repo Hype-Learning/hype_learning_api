@@ -13,6 +13,8 @@ export class CoursesService {
     private readonly coursesRepository: Repository<Course>,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+    @InjectRepository(Topic)
+    private readonly topicsRepository: Repository<Topic>,
   ) {}
 
   async create(createCourseDto: CreateCourseDto, user: User): Promise<Course> {
@@ -38,8 +40,10 @@ export class CoursesService {
   }
 
   async findAllTopics(id: string): Promise<Topic[]> {
-    const course = await this.coursesRepository.findOne(id);
-    const topics = course.topics;
+    const topics = await this.topicsRepository.find({
+      relations: ['course'],
+      where: { courseId: id },
+    });
 
     return topics;
   }

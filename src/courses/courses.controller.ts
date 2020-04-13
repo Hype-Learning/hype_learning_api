@@ -49,6 +49,7 @@ export class CoursesController {
   @Get(':id/topics')
   @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor', 'student'])
+  @UseInterceptors(ClassSerializerInterceptor)
   findAllTopics(@Param('id') id: string): Promise<Topic[]> {
     return this.coursesService.findAllTopics(id);
   }
