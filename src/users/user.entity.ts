@@ -35,6 +35,17 @@ export class User extends BaseEntity {
   @ApiProperty()
   role: string;
 
+  @Column()
+  @ApiProperty()
+  firstName: string;
+
+  @Column()
+  @ApiProperty()
+  lastName: string;
+
+  @Column()
+  isBlocked: boolean;
+
   @OneToMany(
     type => Course,
     course => course.author,
