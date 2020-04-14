@@ -10,6 +10,7 @@ import { AuthService } from './auth.service';
 import { CredentialsDto } from './dto/credentials.dto';
 import { User } from '../users/user.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { SignInDto } from './dto/signin.dto';
 
 @ApiTags('Authorization')
 @Controller('auth')
@@ -24,8 +25,8 @@ export class AuthController {
 
   @Post('/signin')
   signIn(
-    @Body(ValidationPipe) credentialsDto: CredentialsDto,
+    @Body(ValidationPipe) signInDto: SignInDto,
   ): Promise<{ accessToken: string }> {
-    return this.authService.signIn(credentialsDto);
+    return this.authService.signIn(signInDto);
   }
 }
