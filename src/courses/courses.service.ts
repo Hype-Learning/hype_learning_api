@@ -62,4 +62,24 @@ export class CoursesService {
   async remove(id: string): Promise<void> {
     await this.coursesRepository.delete(id);
   }
+
+  async addStudent(courseId: number, studentId: number): Promise<Course> {
+    const course = await this.coursesRepository.findOne({
+      where: { id: courseId },
+      relations: ['participants'],
+    });
+    const student = await this.userRepository.findOne(studentId);
+
+    const participants = await course.participants;
+    const studentExists = participants.find(
+      student => (student.id = studentId),
+    );
+    if (studentExists) {
+      return course;
+    } else {
+      participants.push(student);
+      const updatedCourse = await this.coursesRepository.save(course);
+      return updatedCourse;
+    }
+  }
 }

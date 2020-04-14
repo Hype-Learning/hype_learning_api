@@ -33,6 +33,7 @@ export class User extends BaseEntity {
 
   @Column()
   @ApiProperty()
+  @Exclude()
   role: string;
 
   @Column()
@@ -44,6 +45,7 @@ export class User extends BaseEntity {
   lastName: string;
 
   @Column()
+  @Exclude()
   isBlocked: boolean;
 
   @OneToMany(
