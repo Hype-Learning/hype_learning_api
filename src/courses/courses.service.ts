@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './course.entity';
 import { Repository } from 'typeorm';
@@ -80,6 +80,28 @@ export class CoursesService {
       participants.push(student);
       const updatedCourse = await this.coursesRepository.save(course);
       return updatedCourse;
+    }
+  }
+
+  async removeStudent(courseId: number, studentId: number): Promise<void> {
+    const course = await this.coursesRepository.findOne({
+      where: { id: courseId },
+      relations: ['participants'],
+    });
+
+    const studentExists = course.participants.find(
+      student => student.id == studentId,
+    );
+
+    if (studentExists) {
+      const updatedParticipants = course.participants.filter(
+        student => student.id != studentId,
+      );
+
+      course.participants = updatedParticipants;
+      await this.coursesRepository.save(course);
+    } else {
+      return;
     }
   }
 }

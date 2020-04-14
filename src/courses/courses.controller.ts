@@ -85,4 +85,15 @@ export class CoursesController {
   ) {
     return this.coursesService.addStudent(courseId, studentId);
   }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor'])
+  @Delete(':courseId/students/:studentId')
+  @UseInterceptors(ClassSerializerInterceptor)
+  removeStudent(
+    @Param('courseId') courseId: number,
+    @Param('studentId') studentId: number,
+  ): Promise<void> {
+    return this.coursesService.removeStudent(courseId, studentId);
+  }
 }
