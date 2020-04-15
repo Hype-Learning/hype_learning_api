@@ -6,11 +6,21 @@ import { PassportModule } from '@nestjs/passport';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Topic } from './topic.entity';
 import { Course } from 'src/courses/course.entity';
+import { AppConfigModule } from 'src/config/app/config.module';
+import { AppConfigService } from 'src/config/app/config.service';
+import { MulterModule } from '@nestjs/platform-express';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
     TypeOrmModule.forFeature([Topic, Course]),
+    MulterModule.registerAsync({
+      imports: [AppConfigModule],
+      useFactory: (appConfigService: AppConfigService) => ({
+        dest: appConfigService.cloudinary,
+      }),
+      inject: [AppConfigService],
+    }),
     AuthModule,
   ],
   controllers: [TopicsController],

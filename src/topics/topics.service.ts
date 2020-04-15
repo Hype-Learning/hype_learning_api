@@ -4,7 +4,7 @@ import { Topic } from './topic.entity';
 import { Repository, getRepository } from 'typeorm';
 import { CreateTopicDto } from 'src/topics/dto/create-topic.dto';
 import { Course } from 'src/courses/course.entity';
-
+import * as cloudinary from 'cloudinary';
 @Injectable()
 export class TopicsService {
   constructor(
@@ -14,11 +14,12 @@ export class TopicsService {
     private readonly coursesRepository: Repository<Course>,
   ) {}
 
-  async create(createTopicDto: CreateTopicDto): Promise<Topic> {
+  async create(createTopicDto: CreateTopicDto, file): Promise<Topic> {
     const topic = new Topic();
     topic.title = createTopicDto.title;
     topic.description = createTopicDto.description;
-
+    console.log(file);
+    cloudinary.v2.uploader.upload(file);
     const course = await this.coursesRepository.findOne({
       where: { id: createTopicDto.courseId },
       relations: ['topics'],
