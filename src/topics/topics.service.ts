@@ -20,9 +20,14 @@ export class TopicsService {
     const topic = new Topic();
     topic.title = createTopicDto.title;
     topic.description = createTopicDto.description;
-    const fileUrl = await this.uploadFileService.uploadFile(file);
-    topic.fileUrl = process.env.AWS_URL + fileUrl;
-    console.log(file);
+    if (file) {
+      const fileUrl = await this.uploadFileService.uploadFile(file);
+      topic.fileUrl = process.env.AWS_URL + fileUrl;
+    } else {
+      topic.fileUrl = '';
+    }
+
+    // console.log(file);
     const course = await this.coursesRepository.findOne({
       where: { id: createTopicDto.courseId },
       relations: ['topics'],
@@ -35,8 +40,14 @@ export class TopicsService {
     return newTopic;
   }
 
-  async update(id: string, topicData: any): Promise<Topic> {
+  async update(id: string, topicData: any, file: any): Promise<Topic> {
     const toUpdate = await this.topicsRepository.findOne(id);
+    if (file) {
+      const fileUrl = await this.uploadFileService.uploadFile(file);
+      topicData.fileUrl = process.env.AWS_URL + fileUrl;
+    } else {
+      topicData.fileUrl = '';
+    }
     const updated = Object.assign(toUpdate, topicData);
     const topic = await this.topicsRepository.save(updated);
     return topic;

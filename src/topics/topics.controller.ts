@@ -40,9 +40,14 @@ export class TopicsController {
 
   @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor'])
+  @UseInterceptors(FileInterceptor('file'))
   @Put(':id')
-  update(@Param('id') id, @Body() topicData: CreateTopicDto) {
-    return this.topicsService.update(id, topicData);
+  update(
+    @UploadedFile() file,
+    @Param('id') id,
+    @Body() topicData: CreateTopicDto,
+  ) {
+    return this.topicsService.update(id, topicData, file);
   }
 
   @UseGuards(AuthGuard())
