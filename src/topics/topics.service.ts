@@ -5,6 +5,7 @@ import { Repository, getRepository } from 'typeorm';
 import { CreateTopicDto } from 'src/topics/dto/create-topic.dto';
 import { Course } from 'src/courses/course.entity';
 import * as cloudinary from 'cloudinary';
+import { S3UploadsService } from 'src/common/upload-file';
 @Injectable()
 export class TopicsService {
   constructor(
@@ -12,14 +13,16 @@ export class TopicsService {
     private readonly topicsRepository: Repository<Topic>,
     @InjectRepository(Course)
     private readonly coursesRepository: Repository<Course>,
+    private readonly uploadFileService: S3UploadsService,
   ) {}
 
-  async create(createTopicDto: CreateTopicDto, file): Promise<Topic> {
+  async create(createTopicDto: CreateTopicDto, file: any): Promise<Topic> {
     const topic = new Topic();
     topic.title = createTopicDto.title;
     topic.description = createTopicDto.description;
+    const fileUrl = await this.uploadFileService.uploadFile(file);
+    topic.fileUrl = process.env.AWS_URL + fileUrl;
     console.log(file);
-    cloudinary.v2.uploader.upload(file);
     const course = await this.coursesRepository.findOne({
       where: { id: createTopicDto.courseId },
       relations: ['topics'],

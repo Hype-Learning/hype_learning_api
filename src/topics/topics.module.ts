@@ -9,6 +9,7 @@ import { Course } from 'src/courses/course.entity';
 import { AppConfigModule } from 'src/config/app/config.module';
 import { AppConfigService } from 'src/config/app/config.service';
 import { MulterModule } from '@nestjs/platform-express';
+import { S3UploadsService } from 'src/common/upload-file';
 
 @Module({
   imports: [
@@ -24,6 +25,6 @@ import { MulterModule } from '@nestjs/platform-express';
     AuthModule,
   ],
   controllers: [TopicsController],
-  providers: [TopicsService],
+  providers: [TopicsService, S3UploadsService],
 })
 export class TopicsModule {}

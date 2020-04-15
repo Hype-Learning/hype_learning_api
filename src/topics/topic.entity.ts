@@ -1,5 +1,5 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { IsString, MaxLength, IsNotEmpty } from 'class-validator';
+import { IsString, MaxLength, IsNotEmpty, IsOptional } from 'class-validator';
 import { Course } from 'src/courses/course.entity';
 import { Exclude } from 'class-transformer';
 @Entity()
@@ -18,6 +18,11 @@ export class Topic {
   @IsNotEmpty()
   @MaxLength(1000)
   description: string;
+
+  @Column({ nullable: true })
+  @IsOptional()
+  @MaxLength(1000)
+  fileUrl: string;
 
   @Exclude()
   @ManyToOne(
