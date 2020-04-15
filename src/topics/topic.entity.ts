@@ -1,7 +1,14 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 import { IsString, MaxLength, IsNotEmpty, IsOptional } from 'class-validator';
 import { Course } from 'src/courses/course.entity';
 import { Exclude } from 'class-transformer';
+import { Solution } from './solution.entity';
 @Entity()
 export class Topic {
   @PrimaryGeneratedColumn()
@@ -30,4 +37,11 @@ export class Topic {
     course => course.topics,
   )
   course: Course;
+
+  @Exclude()
+  @OneToMany(
+    type => Solution,
+    solution => solution.topic,
+  )
+  solutions: Solution[];
 }

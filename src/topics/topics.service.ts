@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Topic } from './topic.entity';
-import { Repository, getRepository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateTopicDto } from 'src/topics/dto/create-topic.dto';
 import { Course } from 'src/courses/course.entity';
-import * as cloudinary from 'cloudinary';
 import { S3UploadsService } from 'src/common/upload-file';
+import { Solution } from './solution.entity';
+import { User } from 'src/users/user.entity';
 @Injectable()
 export class TopicsService {
   constructor(
@@ -13,6 +14,10 @@ export class TopicsService {
     private readonly topicsRepository: Repository<Topic>,
     @InjectRepository(Course)
     private readonly coursesRepository: Repository<Course>,
+    @InjectRepository(Solution)
+    private readonly solutionsRepository: Repository<Solution>,
+    @InjectRepository(User)
+    private readonly usersRepository: Repository<Solution>,
     private readonly uploadFileService: S3UploadsService,
   ) {}
 
@@ -55,5 +60,32 @@ export class TopicsService {
 
   async remove(id: string): Promise<void> {
     await this.topicsRepository.delete(id);
+  }
+
+  async addSolution(id: number, user: User, file: any): Promise<Solution> {
+    const topic = await this.topicsRepository.findOne(id);
+    const solution = new Solution();
+    solution.topic = topic;
+    solution.student = user;
+
+    if (file) {
+      const fileUrl = await this.uploadFileService.uploadFile(file);
+      solution.fileUrl = process.env.AWS_URL + fileUrl;
+    } else {
+      solution.fileUrl = '';
+    }
+
+    const createdSolution = await this.solutionsRepository.save(solution);
+
+    return createdSolution;
+  }
+
+  async findAllSolutions(id: string): Promise<Solution[]> {
+    const solutions = await this.solutionsRepository.find({
+      relations: ['topic'],
+      where: { topicId: id },
+    });
+
+    return solutions;
   }
 }

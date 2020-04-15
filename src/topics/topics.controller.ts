@@ -20,6 +20,9 @@ import { Topic } from './topic.entity';
 import { CreateTopicDto } from 'src/topics/dto/create-topic.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerOptions } from 'src/config/multer.config';
+import { GetUser } from 'src/users/user.decorator';
+import { User } from 'src/users/user.entity';
+import { Solution } from './solution.entity';
 @ApiTags('topics')
 @Controller('topics')
 export class TopicsController {
@@ -55,5 +58,26 @@ export class TopicsController {
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
     return this.topicsService.remove(id);
+  }
+
+  @Post(':id/solutions')
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  @SetMetadata('roles', ['admin', 'student'])
+  @UseInterceptors(ClassSerializerInterceptor)
+  @UseInterceptors(FileInterceptor('file'))
+  addSolution(
+    @Param('id') id: number,
+    @GetUser() user: User,
+    @UploadedFile() file,
+  ): Promise<Solution> {
+    return this.topicsService.addSolution(id, user, file);
+  }
+
+  @Get(':id')
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor'])
+  @UseInterceptors(ClassSerializerInterceptor)
+  findAllSolutions(@Param('id') id: string): Promise<Solution[]> {
+    return this.topicsService.findAllSolutions(id);
   }
 }
