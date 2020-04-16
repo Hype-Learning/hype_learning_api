@@ -5,6 +5,7 @@ import { UsersController } from './users.controller';
 import { UserRepository } from './user.repository';
 import { PassportModule } from '@nestjs/passport';
 import { Course } from 'src/courses/course.entity';
+import { S3UploadsService } from 'src/common/upload-file';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { Course } from 'src/courses/course.entity';
     TypeOrmModule.forFeature([UserRepository, Course]),
   ],
   controllers: [UsersController],
-  providers: [UsersService],
+  providers: [UsersService, S3UploadsService],
   exports: [UsersService, TypeOrmModule],
 })
 export class UsersModule {}

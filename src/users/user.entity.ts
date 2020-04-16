@@ -48,6 +48,10 @@ export class User extends BaseEntity {
   @Exclude()
   isBlocked: boolean;
 
+  @Column({ nullable: true })
+  @ApiProperty()
+  fileUrl: string;
+
   @OneToMany(
     type => Course,
     course => course.author,

@@ -4,14 +4,17 @@ import { Repository, DeleteResult } from 'typeorm';
 import { User } from './user.entity';
 import { CreateUserDto } from './dto/create-user.dto';
 import { Course } from 'src/courses/course.entity';
-import { classToPlain } from 'class-transformer';
+import { S3UploadsService } from 'src/common/upload-file';
+import { UpdateUserDto } from './dto/update-user.dto';
+import { UserRepository } from './user.repository';
 @Injectable()
 export class UsersService {
   constructor(
     @InjectRepository(User)
-    private readonly userRepository: Repository<User>,
+    private readonly userRepository: UserRepository,
     @InjectRepository(Course)
     private readonly coursesRepository: Repository<Course>,
+    private readonly uploadFileService: S3UploadsService,
   ) {}
 
   public async findAll(): Promise<User[]> {
@@ -30,14 +33,43 @@ export class UsersService {
     return await this.userRepository.save(user);
   }
 
-  public async update(id: number, newValue: CreateUserDto): Promise<User> {
-    const user = await this.userRepository.findOneOrFail(id);
-    if (!user.id) {
+  public async update(
+    user: User,
+    newValue: UpdateUserDto,
+    file: any,
+  ): Promise<User> {
+    if (!user) {
       // tslint:disable-next-line:no-console
       console.error("user doesn't exist");
+      return;
     }
-    await this.userRepository.update(id, newValue);
-    return await this.userRepository.findOne(id);
+
+    // newValue.email ? (user.email = newValue.email) : (user.email = user.email);
+    // newValue.password
+    //   ? (user.password = newValue.password)
+    //   : (user.password = user.password);
+
+    console.log(newValue.email);
+    console.log('xD');
+
+    if (file) {
+      const fileUrl = await this.uploadFileService.uploadFile(file);
+      user.fileUrl = process.env.AWS_URL + fileUrl;
+      await this.userRepository.update(user.id, user);
+    }
+
+    if (newValue.email || newValue.password) {
+      user.email = newValue.email || user.email;
+      user.password = newValue.password || user.password;
+      await this.userRepository.update(user.id, {
+        email: user.email,
+        password: (
+          await this.userRepository.hashPassword(user.password, user.salt)
+        ).toString(),
+      });
+    }
+
+    return await this.userRepository.findOne(user.id);
   }
 
   public async delete(id: number): Promise<DeleteResult> {
@@ -52,6 +84,7 @@ export class UsersService {
       throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
     }
     user = this.userRepository.create(userDto);
+    user.fileUrl = '';
     return await this.userRepository.save(user);
   }
 
