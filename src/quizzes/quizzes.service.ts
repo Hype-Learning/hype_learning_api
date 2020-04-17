@@ -75,4 +75,8 @@ export class QuizzesService {
     await this.topicsRepository.save(topicToUpdate);
     return createdQuiz;
   }
+
+  async remove(id: number) {
+    this.quizzesRepository.delete(id);
+  }
 }

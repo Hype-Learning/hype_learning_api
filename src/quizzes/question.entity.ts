@@ -45,6 +45,7 @@ export class Question {
   @ManyToOne(
     type => Quiz,
     quiz => quiz.questions,
+    { onDelete: 'CASCADE' },
   )
   quiz: Quiz;
 }
