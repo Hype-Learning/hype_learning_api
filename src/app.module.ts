@@ -7,6 +7,7 @@ import { DbConfigService } from './config/database/config.service';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TopicsModule } from './topics/topics.module';
+import { QuizzesModule } from './quizzes/quizzes.module';
 import * as ormconfig from './ormconfig';
 
 export function DatabaseOrmModule(): DynamicModule {
@@ -25,6 +26,7 @@ export function DatabaseOrmModule(): DynamicModule {
     UsersModule,
     CoursesModule,
     TopicsModule,
+    QuizzesModule,
   ],
   controllers: [],
   providers: [],

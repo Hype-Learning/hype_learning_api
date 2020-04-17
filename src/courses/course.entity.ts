@@ -48,10 +48,4 @@ export class Course {
   @ManyToMany(type => User)
   @JoinTable()
   participants: User[];
-
-  //list of topics
-
-  //instructor
-  //students
-  //semester
 }

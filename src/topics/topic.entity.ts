@@ -4,11 +4,14 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 import { IsString, MaxLength, IsNotEmpty, IsOptional } from 'class-validator';
 import { Course } from 'src/courses/course.entity';
 import { Exclude } from 'class-transformer';
 import { Solution } from './solution.entity';
+import { Quiz } from 'src/quizzes/quiz.entity';
 @Entity()
 export class Topic {
   @PrimaryGeneratedColumn()
@@ -44,4 +47,8 @@ export class Topic {
     solution => solution.topic,
   )
   solutions: Solution[];
+
+  @OneToOne(type => Quiz)
+  @JoinColumn()
+  quiz: Quiz;
 }
