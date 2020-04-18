@@ -31,6 +31,13 @@ export class UsersController {
   }
 
   @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin'])
+  @Get('management')
+  findAll(): Promise<User[]> {
+    return this.usersService.findAll();
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor', 'student'])
   @Put(':id')
   @UseInterceptors(ClassSerializerInterceptor)
