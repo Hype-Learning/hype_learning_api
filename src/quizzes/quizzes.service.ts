@@ -77,7 +77,13 @@ export class QuizzesService {
   }
 
   async remove(id: number) {
-    this.quizzesRepository.delete(id);
+    const toRemove = await this.quizzesRepository.findOne(id);
+    const topic = await this.topicsRepository.findOne({
+      where: { quiz: toRemove },
+    });
+    topic.quiz = null;
+    await this.topicsRepository.save(topic);
+    await this.quizzesRepository.delete(id);
   }
 
   async findOne(topicId: number) {
@@ -88,6 +94,21 @@ export class QuizzesService {
       relations: ['questions'],
     });
 
+    return quiz;
+  }
+
+  // async update(id: string, title: string): Promise<Quiz> {
+  //   const toUpdate = await this.quizzesRepository.findOne(id);
+  //   const updated = Object.assign(toUpdate, title);
+  //   toUpdate.title =
+  //   const quiz = await this.quizzesRepository.save(toUpdate);
+  //   return quiz;
+  // }
+
+  async update(id: string, quizData: any): Promise<Quiz> {
+    const toUpdate = await this.quizzesRepository.findOne(id);
+    const updated = Object.assign(toUpdate, quizData);
+    const quiz = await this.quizzesRepository.save(updated);
     return quiz;
   }
 }

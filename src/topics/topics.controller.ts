@@ -53,7 +53,7 @@ export class TopicsController {
     return this.topicsService.update(id, topicData, file);
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor'])
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
