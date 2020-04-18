@@ -8,6 +8,7 @@ import {
   Put,
   UploadedFile,
   Body,
+  Param,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { RolesGuard } from 'src/common/guards/roles.guard';
@@ -48,5 +49,22 @@ export class UsersController {
     @UploadedFile() file: any,
   ): Promise<User> {
     return this.usersService.update(user, updateUserDto, file);
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin'])
+  @Put('management/changeStatus/:id')
+  changeStatus(@Param('id') id: number): Promise<User> {
+    return this.usersService.changeStatus(id);
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin'])
+  @Put('management/:role/:id')
+  changeRole(
+    @Param('id') id: number,
+    @Param('role') role: string,
+  ): Promise<User> {
+    return this.usersService.changeRole(id, role);
   }
 }

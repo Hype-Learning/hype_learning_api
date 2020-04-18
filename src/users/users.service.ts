@@ -105,4 +105,25 @@ export class UsersService {
 
     return studentCourses;
   }
+
+  async changeStatus(id: number) {
+    const user = await this.userRepository.findOne(id);
+    user.isBlocked = !user.isBlocked;
+
+    return this.userRepository.save(user);
+  }
+
+  async changeRole(id: number, role: string) {
+    const user = await this.userRepository.findOne(id);
+    if (
+      (role == 'inactive' ||
+        role == 'student' ||
+        role == 'instructor' ||
+        role == 'admin') &&
+      user.role == 'inactive'
+    )
+      user.role = role;
+
+    return this.userRepository.save(user);
+  }
 }
