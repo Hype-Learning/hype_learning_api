@@ -1,6 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { IsString, MaxLength, IsNotEmpty } from 'class-validator';
 import { Quiz } from './quiz.entity';
+import { Exclude } from 'class-transformer';
 @Entity()
 export class Question {
   @PrimaryGeneratedColumn()
@@ -40,6 +41,7 @@ export class Question {
   @IsString()
   @IsNotEmpty()
   @MaxLength(1000)
+  @Exclude()
   correct: string;
 
   @ManyToOne(

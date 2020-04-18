@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Topic } from 'src/topics/topic.entity';
 import { User } from 'src/users/user.entity';
 import { Quiz } from './quiz.entity';
@@ -78,5 +78,16 @@ export class QuizzesService {
 
   async remove(id: number) {
     this.quizzesRepository.delete(id);
+  }
+
+  async findOne(topicId: number) {
+    const topic = await this.topicsRepository.findOne(topicId, {
+      relations: ['quiz'],
+    });
+    const quiz = await this.quizzesRepository.findOne(topic.quiz.id, {
+      relations: ['questions'],
+    });
+
+    return quiz;
   }
 }

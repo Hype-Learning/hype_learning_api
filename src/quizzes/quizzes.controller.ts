@@ -8,6 +8,7 @@ import {
   ClassSerializerInterceptor,
   Param,
   Delete,
+  Get,
 } from '@nestjs/common';
 import { ApiTags, ApiResponse } from '@nestjs/swagger';
 import { QuizzesService } from './quizzes.service';
@@ -34,6 +35,14 @@ export class QuizzesController {
     @GetUser() user: User,
   ): Promise<Quiz> {
     return this.quizzesService.create(topicId, createQuizDto, user);
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor', 'student'])
+  @UseInterceptors(ClassSerializerInterceptor)
+  @Get(':id')
+  findOne(@Param('id') id: number): Promise<Quiz> {
+    return this.quizzesService.findOne(id);
   }
 
   @UseGuards(AuthGuard())
