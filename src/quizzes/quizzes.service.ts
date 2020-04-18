@@ -7,6 +7,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CreateQuizDto } from './dto/create-quiz.dto';
 import { Question } from './question.entity';
 import { isNullOrUndefined } from 'util';
+import { SolveQuizDto } from './dto/solve-quiz.dto';
+import { Result } from './result.entity';
 
 @Injectable()
 export class QuizzesService {
@@ -19,6 +21,8 @@ export class QuizzesService {
     private readonly topicsRepository: Repository<Topic>,
     @InjectRepository(Question)
     private readonly questionsRepository: Repository<Question>,
+    @InjectRepository(Result)
+    private readonly resultsRepository: Repository<Result>,
   ) {}
 
   async create(
@@ -97,18 +101,38 @@ export class QuizzesService {
     return quiz;
   }
 
-  // async update(id: string, title: string): Promise<Quiz> {
-  //   const toUpdate = await this.quizzesRepository.findOne(id);
-  //   const updated = Object.assign(toUpdate, title);
-  //   toUpdate.title =
-  //   const quiz = await this.quizzesRepository.save(toUpdate);
-  //   return quiz;
-  // }
-
   async update(id: string, quizData: any): Promise<Quiz> {
     const toUpdate = await this.quizzesRepository.findOne(id);
     const updated = Object.assign(toUpdate, quizData);
     const quiz = await this.quizzesRepository.save(updated);
     return quiz;
+  }
+
+  async solveQuiz(id: number, solveQuizDto: SolveQuizDto, user: User) {
+    const quiz = await this.quizzesRepository.findOne(id, {
+      relations: ['questions'],
+    });
+
+    const student = await this.userRepository.findOne(user.id, {
+      relations: ['results'],
+    });
+
+    const questions = quiz.questions;
+    let score = 0;
+    const count = questions.length;
+
+    for (let i = 0; i < count; i++) {
+      if (questions[i].correct == solveQuizDto.answers[i]) score++;
+    }
+
+    const total = score / count;
+    const result = new Result();
+    result.quiz = quiz;
+    result.user = user;
+    result.score = total;
+    await this.resultsRepository.save(result);
+    student.results.push(result);
+    await this.userRepository.save(student);
+    return total * 100;
   }
 }

@@ -8,11 +8,12 @@ import { Quiz } from './quiz.entity';
 import { UserRepository } from 'src/users/user.repository';
 import { Topic } from 'src/topics/topic.entity';
 import { Question } from './question.entity';
+import { Result } from './result.entity';
 
 @Module({
   imports: [
     PassportModule.register({ defaultStrategy: 'jwt' }),
-    TypeOrmModule.forFeature([Quiz, Topic, UserRepository, Question]),
+    TypeOrmModule.forFeature([Quiz, Topic, UserRepository, Question, Result]),
     AuthModule,
   ],
   controllers: [QuizzesController],

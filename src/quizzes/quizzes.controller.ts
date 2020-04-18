@@ -20,6 +20,7 @@ import { CreateQuizDto } from './dto/create-quiz.dto';
 import { User } from 'src/users/user.entity';
 import { GetUser } from 'src/users/user.decorator';
 import { EditQuizDto } from './dto/edit-quiz.dto';
+import { SolveQuizDto } from './dto/solve-quiz.dto';
 
 @ApiTags('quizzes')
 @Controller('quizzes')
@@ -59,5 +60,17 @@ export class QuizzesController {
   @Delete(':id')
   remove(@Param('id') id: number): Promise<void> {
     return this.quizzesService.remove(id);
+  }
+
+  @Post('solve/:id')
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['student'])
+  @UseInterceptors(ClassSerializerInterceptor)
+  solveQuiz(
+    @Param('id') id,
+    @Body() solveQuizDto: SolveQuizDto,
+    @GetUser() user: User,
+  ) {
+    return this.quizzesService.solveQuiz(id, solveQuizDto, user);
   }
 }

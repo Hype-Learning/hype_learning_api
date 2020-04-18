@@ -14,9 +14,8 @@ export class Result {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  @IsDecimal()
   @IsNotEmpty()
+  @Column({ type: 'real' })
   score: number;
 
   @ManyToOne(
