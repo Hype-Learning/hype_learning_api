@@ -38,6 +38,7 @@ export class AuthService {
     response.role = user.role;
     response.isBlocked = user.isBlocked;
     response.token = accessToken;
+    response.fileUrl = user.fileUrl;
     return response;
   }
 }
