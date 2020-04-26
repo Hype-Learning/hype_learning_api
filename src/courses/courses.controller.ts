@@ -68,7 +68,7 @@ export class CoursesController {
     return this.coursesService.update(id, courseData);
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor'])
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
