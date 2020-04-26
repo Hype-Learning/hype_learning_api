@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './course.entity';
 import { Repository, createQueryBuilder } from 'typeorm';
@@ -48,8 +48,11 @@ export class CoursesService {
     return topics;
   }
 
-  findOne(id: string): Promise<Course> {
-    return this.coursesRepository.findOne(id);
+  async findOne(id: string): Promise<Course> {
+    const course = await this.coursesRepository.findOne(id);
+    if (course === undefined) {
+      throw new HttpException('Not Found', 404);
+    } else return course;
   }
 
   async update(id: string, courseData: any): Promise<Course> {
