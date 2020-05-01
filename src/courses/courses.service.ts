@@ -49,7 +49,9 @@ export class CoursesService {
   }
 
   async findOne(id: string): Promise<Course> {
-    const course = await this.coursesRepository.findOne(id);
+    const course = await this.coursesRepository.findOne(id, {
+      relations: ['participants'],
+    });
     if (course === undefined) {
       throw new HttpException('Not Found', 404);
     } else return course;

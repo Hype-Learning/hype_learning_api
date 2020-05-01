@@ -54,8 +54,9 @@ export class CoursesController {
     return this.coursesService.findAllTopics(id);
   }
 
-  // @UseGuards(RolesGuard)
-  // @SetMetadata('roles', ['admin', 'instructor', 'student'])
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor', 'student'])
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Course> {
     return this.coursesService.findOne(id);
