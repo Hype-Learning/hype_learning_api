@@ -45,9 +45,6 @@ export class UsersService {
     }
 
     // newValue.email ? (user.email = newValue.email) : (user.email = user.email);
-    // newValue.password
-    //   ? (user.password = newValue.password)
-    //   : (user.password = user.password);
 
     console.log(newValue.email);
     console.log('xD');
@@ -58,16 +55,34 @@ export class UsersService {
       await this.userRepository.update(user.id, user);
     }
 
-    if (newValue.email || newValue.password) {
-      user.email = newValue.email || user.email;
-      user.password = newValue.password || user.password;
+    if (newValue.email != '') {
+      user.email = newValue.email;
+      await this.userRepository.update(user.id, user);
+    }
+
+    if (newValue.password != '') {
+      user.password = newValue.password;
       await this.userRepository.update(user.id, {
-        email: user.email,
         password: (
           await this.userRepository.hashPassword(user.password, user.salt)
         ).toString(),
       });
     }
+
+    // if (newValue.email || newValue.password) {
+    //   user.email = newValue.email || user.email;
+    //   user.password = newValue.password || user.password;
+
+    //   newValue.password!=null
+    //   ? (user.password = newValue.password)
+    //   : (user.password = user.password);
+    //   await this.userRepository.update(user.id, {
+    //     email: user.email,
+    //     password: (
+    //       await this.userRepository.hashPassword(user.password, user.salt)
+    //     ).toString(),
+    //   });
+    // }
 
     return await this.userRepository.findOne(user.id);
   }
