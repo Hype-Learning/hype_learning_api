@@ -21,6 +21,8 @@ export class UserRepository extends Repository<User> {
     user.firstName = firstName;
     user.lastName = lastName;
     user.isBlocked = false;
+    user.fileUrl =
+      'https://hypelearning.s3.eu-central-1.amazonaws.com/default.jpg';
 
     try {
       await user.save();
