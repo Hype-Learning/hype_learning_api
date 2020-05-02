@@ -78,6 +78,14 @@ export class CoursesController {
 
   @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor'])
+  @Get(':courseId/candidates')
+  @UseInterceptors(ClassSerializerInterceptor)
+  showCandidates(@Param('courseId') courseId: number) {
+    return this.coursesService.showCandidates(courseId);
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor'])
   @Put(':courseId/students/:studentId')
   @UseInterceptors(ClassSerializerInterceptor)
   addStudent(

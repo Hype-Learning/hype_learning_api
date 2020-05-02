@@ -68,6 +68,24 @@ export class CoursesService {
     await this.coursesRepository.delete(id);
   }
 
+  async showCandidates(courseId: number): Promise<User[]> {
+    const course = await this.coursesRepository.findOne({
+      where: { id: courseId },
+      relations: ['participants'],
+    });
+
+    const users = await this.userRepository.find();
+
+    const students = users.filter(user => user.role == 'student');
+    const candidates = students.filter(function(student) {
+      return !course.participants.find(function(participant) {
+        return student.id === participant.id;
+      });
+    });
+
+    return candidates;
+  }
+
   async addStudent(courseId: number, studentId: number): Promise<Course> {
     const course = await this.coursesRepository.findOne({
       where: { id: courseId },
