@@ -94,9 +94,7 @@ export class CoursesService {
     const student = await this.userRepository.findOne(studentId);
 
     const participants = await course.participants;
-    const studentExists = participants.find(
-      student => (student.id = studentId),
-    );
+    const studentExists = participants.find(student => student.id == studentId);
     if (studentExists) {
       return course;
     } else {
