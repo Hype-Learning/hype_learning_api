@@ -46,16 +46,34 @@ export class TopicsService {
   }
 
   async update(id: string, topicData: any, file: any): Promise<Topic> {
-    const toUpdate = await this.topicsRepository.findOne(id);
+    const topic = await this.topicsRepository.findOne(id);
+    // if (file) {
+    //   const fileUrl = await this.uploadFileService.uploadFile(file);
+    //   topicData.fileUrl = process.env.AWS_URL + fileUrl;
+    // } else {
+    //   topicData.fileUrl = '';
+    // }
+    // const updated = Object.assign(toUpdate, topicData);
+    // const topic = await this.topicsRepository.save(updated);
+    // return topic;
+
     if (file) {
       const fileUrl = await this.uploadFileService.uploadFile(file);
-      topicData.fileUrl = process.env.AWS_URL + fileUrl;
-    } else {
-      topicData.fileUrl = '';
+      topic.fileUrl = process.env.AWS_URL + fileUrl;
+      await this.topicsRepository.update(topic.id, topic);
     }
-    const updated = Object.assign(toUpdate, topicData);
-    const topic = await this.topicsRepository.save(updated);
-    return topic;
+
+    if (topicData.title != '') {
+      topic.title = topicData.title;
+      await this.topicsRepository.update(topic.id, topic);
+    }
+
+    if (topicData.description != '') {
+      topic.description = topicData.description;
+      await this.topicsRepository.update(topic.id, topic);
+    }
+
+    return await this.topicsRepository.findOne(topic.id);
   }
 
   async remove(id: string): Promise<void> {
