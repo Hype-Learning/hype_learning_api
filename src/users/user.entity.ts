@@ -6,12 +6,15 @@ import {
   Entity,
   Unique,
   OneToMany,
+  JoinTable,
+  ManyToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
 import { Course } from 'src/courses/course.entity';
 import { Result } from 'src/quizzes/result.entity';
+import { Solution } from 'src/topics/solution.entity';
 
 @Entity()
 @Unique(['email'])

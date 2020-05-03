@@ -17,7 +17,7 @@ export class TopicsService {
     @InjectRepository(Solution)
     private readonly solutionsRepository: Repository<Solution>,
     @InjectRepository(User)
-    private readonly usersRepository: Repository<Solution>,
+    private readonly usersRepository: Repository<User>,
     private readonly uploadFileService: S3UploadsService,
   ) {}
 
@@ -84,18 +84,22 @@ export class TopicsService {
     const topic = await this.topicsRepository.findOne(id);
     const solution = new Solution();
     solution.topic = topic;
-    solution.student = user;
 
+    const student = await this.usersRepository.findOne(user.id);
     if (file) {
       const fileUrl = await this.uploadFileService.uploadFile(file);
       solution.fileUrl = process.env.AWS_URL + fileUrl;
     } else {
       solution.fileUrl = '';
     }
-
     const createdSolution = await this.solutionsRepository.save(solution);
-
-    return createdSolution;
+    const xd = await this.solutionsRepository.findOne({
+      relations: ['solvers'],
+      where: { id: createdSolution.id },
+    });
+    xd.solvers.push(student);
+    const response = await this.solutionsRepository.save(xd);
+    return response;
   }
 
   async findAllSolutions(id: string): Promise<Solution[]> {

@@ -5,6 +5,8 @@ import {
   ManyToOne,
   OneToOne,
   JoinColumn,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { MaxLength } from 'class-validator';
 import { Exclude } from 'class-transformer';
@@ -20,14 +22,13 @@ export class Solution {
   fileUrl: string;
 
   @Exclude()
-  @OneToOne(type => User)
-  @JoinColumn()
-  student: User;
-
-  @Exclude()
   @ManyToOne(
     type => Topic,
     topic => topic.solutions,
   )
   topic: Topic;
+
+  @ManyToMany(type => User)
+  @JoinTable()
+  solvers: User[];
 }
