@@ -104,7 +104,7 @@ export class TopicsService {
 
   async findAllSolutions(id: string): Promise<Solution[]> {
     const solutions = await this.solutionsRepository.find({
-      relations: ['topic'],
+      relations: ['topic', 'solvers'],
       where: { topicId: id },
     });
 
