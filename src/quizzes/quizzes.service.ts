@@ -53,24 +53,25 @@ export class QuizzesService {
     }
     const quiz = new Quiz();
     quiz.title = createQuizDto.title;
+
     const newQuiz = await this.quizzesRepository.save(quiz);
-    const xd = await this.quizzesRepository.findOne({
-      relations: ['questions'],
-      where: { id: newQuiz.id },
-    });
-    createQuizDto.questions.forEach(async question => {
-      const newQuestion = Object.assign(new Question(), {
-        title: question.text,
-        a: question.answers[0],
-        b: question.answers[1],
-        c: question.answers[2],
-        d: question.answers[3],
-        correct: question.correctAnswer,
-        quiz: newQuiz,
-      });
-      const createdQuestion = await this.questionsRepository.save(newQuestion);
-      xd.questions.push(createdQuestion);
-    });
+    // const xd = await this.quizzesRepository.findOne({
+    //   relations: ['questions'],
+    //   where: { id: newQuiz.id },
+    // });
+    // createQuizDto.questions.forEach(async question => {
+    //   const newQuestion = Object.assign(new Question(), {
+    //     title: question.text,
+    //     a: question.answers[0],
+    //     b: question.answers[1],
+    //     c: question.answers[2],
+    //     d: question.answers[3],
+    //     correct: question.correctAnswer,
+    //     quiz: newQuiz,
+    //   });
+    //   const createdQuestion = await this.questionsRepository.save(newQuestion);
+    //   xd.questions.push(createdQuestion);
+    // });
     const createdQuiz = await this.quizzesRepository.save(newQuiz);
     const topicToUpdate = await this.topicsRepository.findOne(topicId, {
       relations: ['quiz'],

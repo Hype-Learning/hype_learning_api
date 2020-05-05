@@ -1,9 +1,6 @@
-import { IsString, IsArray } from 'class-validator';
-import { CreateQuestionDto } from './create-question.dto';
+import { IsString } from 'class-validator';
 
 export class CreateQuizDto {
   @IsString()
   readonly title: string;
-  @IsArray()
-  readonly questions: CreateQuestionDto[];
 }
