@@ -39,13 +39,13 @@ export class CoursesService {
     return this.coursesRepository.find();
   }
 
-  async findAllTopics(id: string): Promise<Topic[]> {
+  async findAllTopics(id: number): Promise<Topic[]> {
     const topics = await this.topicsRepository.find({
       relations: ['course'],
-      where: { courseId: id },
     });
+    const response = topics.filter(topic => topic.course.id == id);
 
-    return topics;
+    return response;
   }
 
   async findOne(id: string): Promise<Course> {
