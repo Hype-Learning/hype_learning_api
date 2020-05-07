@@ -9,6 +9,7 @@ import { Question } from './question.entity';
 import { isNullOrUndefined } from 'util';
 import { SolveQuizDto } from './dto/solve-quiz.dto';
 import { Result } from './result.entity';
+import { CreateQuestionDto } from './dto/create-question.dto';
 
 @Injectable()
 export class QuizzesService {
@@ -55,23 +56,7 @@ export class QuizzesService {
     quiz.title = createQuizDto.title;
 
     const newQuiz = await this.quizzesRepository.save(quiz);
-    // const xd = await this.quizzesRepository.findOne({
-    //   relations: ['questions'],
-    //   where: { id: newQuiz.id },
-    // });
-    // createQuizDto.questions.forEach(async question => {
-    //   const newQuestion = Object.assign(new Question(), {
-    //     title: question.text,
-    //     a: question.answers[0],
-    //     b: question.answers[1],
-    //     c: question.answers[2],
-    //     d: question.answers[3],
-    //     correct: question.correctAnswer,
-    //     quiz: newQuiz,
-    //   });
-    //   const createdQuestion = await this.questionsRepository.save(newQuestion);
-    //   xd.questions.push(createdQuestion);
-    // });
+
     const createdQuiz = await this.quizzesRepository.save(newQuiz);
     const topicToUpdate = await this.topicsRepository.findOne(topicId, {
       relations: ['quiz'],
@@ -91,11 +76,8 @@ export class QuizzesService {
     await this.quizzesRepository.delete(id);
   }
 
-  async findOne(topicId: number) {
-    const topic = await this.topicsRepository.findOne(topicId, {
-      relations: ['quiz'],
-    });
-    const quiz = await this.quizzesRepository.findOne(topic.quiz.id, {
+  async findOne(quizId: number) {
+    const quiz = await this.quizzesRepository.findOne(quizId, {
       relations: ['questions'],
     });
 
@@ -135,5 +117,28 @@ export class QuizzesService {
     student.results.push(result);
     await this.userRepository.save(student);
     return total * 100;
+  }
+
+  async addQuestion(id: number, createQuestionDto: CreateQuestionDto) {
+    const quiz = await this.quizzesRepository.findOne(id, {
+      relations: ['questions'],
+    });
+
+    //    const xd = await this.quizzesRepository.findOne({
+    //   relations: ['questions'],
+    //   where: { id: newQuiz.id },
+    // });
+    const question = new Question();
+    question.title = createQuestionDto.title;
+    question.a = createQuestionDto.a;
+    question.b = createQuestionDto.b;
+    question.c = createQuestionDto.c;
+    question.d = createQuestionDto.d;
+    question.correct = createQuestionDto.correctAnswer;
+    const savedQuestion = await this.questionsRepository.save(question);
+    quiz.questions.push(savedQuestion);
+    const updatedQuiz = await this.quizzesRepository.save(quiz);
+
+    return updatedQuiz;
   }
 }

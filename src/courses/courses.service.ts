@@ -41,7 +41,7 @@ export class CoursesService {
 
   async findAllTopics(id: number): Promise<Topic[]> {
     const topics = await this.topicsRepository.find({
-      relations: ['course'],
+      relations: ['course', 'quiz'],
     });
     const response = topics.filter(topic => topic.course.id == id);
 

@@ -21,6 +21,7 @@ import { User } from 'src/users/user.entity';
 import { GetUser } from 'src/users/user.decorator';
 import { EditQuizDto } from './dto/edit-quiz.dto';
 import { SolveQuizDto } from './dto/solve-quiz.dto';
+import { CreateQuestionDto } from './dto/create-question.dto';
 
 @ApiTags('quizzes')
 @Controller('quizzes')
@@ -72,5 +73,12 @@ export class QuizzesController {
     @GetUser() user: User,
   ) {
     return this.quizzesService.solveQuiz(id, solveQuizDto, user);
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor'])
+  @Post(':id/question')
+  addQuestion(@Param('id') id, @Body() createQuestionDto: CreateQuestionDto) {
+    return this.quizzesService.addQuestion(id, createQuestionDto);
   }
 }
