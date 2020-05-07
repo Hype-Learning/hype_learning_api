@@ -65,7 +65,7 @@ export class QuizzesController {
 
   @Post('solve/:id')
   @UseGuards(AuthGuard(), RolesGuard)
-  @SetMetadata('roles', ['student'])
+  @SetMetadata('roles', ['student', 'instructor', 'admin'])
   @UseInterceptors(ClassSerializerInterceptor)
   solveQuiz(
     @Param('id') id,
