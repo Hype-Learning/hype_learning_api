@@ -28,6 +28,10 @@ export class AuthService {
     }
 
     const user = await this.userRepository.findOne({ where: { email: email } });
+    if (user.isBlocked) {
+      throw new UnauthorizedException('Jesteś zbanowany, typie');
+    }
+
     const payload: JwtPayload = { email };
     const accessToken = this.jwtService.sign(payload);
     const response = new UserVM();
