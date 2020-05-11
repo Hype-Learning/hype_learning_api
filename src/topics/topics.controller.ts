@@ -77,7 +77,7 @@ export class TopicsController {
   @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor'])
   @UseInterceptors(ClassSerializerInterceptor)
-  findAllSolutions(@Param('id') id: string): Promise<Solution[]> {
+  findAllSolutions(@Param('id') id: number): Promise<Solution[]> {
     return this.topicsService.findAllSolutions(id);
   }
 }

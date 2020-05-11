@@ -102,12 +102,16 @@ export class TopicsService {
     return response;
   }
 
-  async findAllSolutions(id: string): Promise<Solution[]> {
+  async findAllSolutions(id: number): Promise<Solution[]> {
     const solutions = await this.solutionsRepository.find({
       relations: ['topic', 'solvers'],
       where: { topicId: id },
     });
 
-    return solutions;
+    const filteredSolutions = solutions.filter(
+      solution => solution.topic.id == id,
+    );
+
+    return filteredSolutions;
   }
 }
