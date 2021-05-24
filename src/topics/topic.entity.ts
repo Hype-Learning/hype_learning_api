@@ -1,7 +1,17 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { IsString, MaxLength, IsNotEmpty } from 'class-validator';
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { IsString, MaxLength, IsNotEmpty, IsOptional } from 'class-validator';
 import { Course } from 'src/courses/course.entity';
 import { Exclude } from 'class-transformer';
+import { Solution } from './solution.entity';
+import { Quiz } from 'src/quizzes/quiz.entity';
 @Entity()
 export class Topic {
   @PrimaryGeneratedColumn()
@@ -19,10 +29,26 @@ export class Topic {
   @MaxLength(1000)
   description: string;
 
+  @Column({ nullable: true })
+  @IsOptional()
+  @MaxLength(1000)
+  fileUrl: string;
+
   @Exclude()
   @ManyToOne(
     type => Course,
     course => course.topics,
   )
   course: Course;
+
+  @Exclude()
+  @OneToMany(
+    type => Solution,
+    solution => solution.topic,
+  )
+  solutions: Solution[];
+
+  @OneToOne(type => Quiz)
+  @JoinColumn()
+  quiz: Quiz;
 }

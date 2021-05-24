@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException, HttpException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Course } from './course.entity';
-import { Repository } from 'typeorm';
+import { Repository, createQueryBuilder } from 'typeorm';
 import { CreateCourseDto } from './dto/create-course.dto';
 import { User } from 'src/users/user.entity';
 import { Topic } from 'src/topics/topic.entity';
@@ -39,17 +39,22 @@ export class CoursesService {
     return this.coursesRepository.find();
   }
 
-  async findAllTopics(id: string): Promise<Topic[]> {
+  async findAllTopics(id: number): Promise<Topic[]> {
     const topics = await this.topicsRepository.find({
-      relations: ['course'],
-      where: { courseId: id },
+      relations: ['course', 'quiz'],
     });
+    const response = topics.filter(topic => topic.course.id == id);
 
-    return topics;
+    return response;
   }
 
-  findOne(id: string): Promise<Course> {
-    return this.coursesRepository.findOne(id);
+  async findOne(id: string): Promise<Course> {
+    const course = await this.coursesRepository.findOne(id, {
+      relations: ['participants'],
+    });
+    if (course === undefined) {
+      throw new HttpException('Not Found', 404);
+    } else return course;
   }
 
   async update(id: string, courseData: any): Promise<Course> {
@@ -61,5 +66,63 @@ export class CoursesService {
 
   async remove(id: string): Promise<void> {
     await this.coursesRepository.delete(id);
+  }
+
+  async showCandidates(courseId: number): Promise<User[]> {
+    const course = await this.coursesRepository.findOne({
+      where: { id: courseId },
+      relations: ['participants'],
+    });
+
+    const users = await this.userRepository.find();
+
+    const students = users.filter(user => user.role == 'student');
+    const candidates = students.filter(function(student) {
+      return !course.participants.find(function(participant) {
+        return student.id === participant.id;
+      });
+    });
+
+    return candidates;
+  }
+
+  async addStudent(courseId: number, studentId: number): Promise<Course> {
+    const course = await this.coursesRepository.findOne({
+      where: { id: courseId },
+      relations: ['participants'],
+    });
+    const student = await this.userRepository.findOne(studentId);
+
+    const participants = await course.participants;
+    const studentExists = participants.find(student => student.id == studentId);
+    if (studentExists) {
+      return course;
+    } else {
+      participants.push(student);
+      const updatedCourse = await this.coursesRepository.save(course);
+      return updatedCourse;
+    }
+  }
+
+  async removeStudent(courseId: number, studentId: number): Promise<void> {
+    const course = await this.coursesRepository.findOne({
+      where: { id: courseId },
+      relations: ['participants'],
+    });
+
+    const studentExists = course.participants.find(
+      student => student.id == studentId,
+    );
+
+    if (studentExists) {
+      const updatedParticipants = course.participants.filter(
+        student => student.id != studentId,
+      );
+
+      course.participants = updatedParticipants;
+      await this.coursesRepository.save(course);
+    } else {
+      return;
+    }
   }
 }

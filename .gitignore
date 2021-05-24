@@ -35,3 +35,6 @@ lerna-debug.log*
 
 # ENV
 *.env
+quiztest copy.json
+quiztest.json
+quiztest%20student.json

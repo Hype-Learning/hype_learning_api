@@ -4,6 +4,8 @@ import {
   PrimaryGeneratedColumn,
   ManyToOne,
   OneToMany,
+  ManyToMany,
+  JoinTable,
 } from 'typeorm';
 import { IsString, MaxLength, IsNotEmpty } from 'class-validator';
 import { User } from 'src/users/user.entity';
@@ -43,9 +45,7 @@ export class Course {
   )
   topics: Topic[];
 
-  //list of topics
-
-  //instructor
-  //students
-  //semester
+  @ManyToMany(type => User)
+  @JoinTable()
+  participants: User[];
 }

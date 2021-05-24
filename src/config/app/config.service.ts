@@ -4,7 +4,7 @@ import { ConfigService } from '@nestjs/config';
 @Injectable()
 export class AppConfigService {
   constructor(private configService: ConfigService) {}
-  
+
   get name(): string {
     return this.configService.get<string>('app.name');
   }
@@ -15,9 +15,12 @@ export class AppConfigService {
     return this.configService.get<string>('app.url');
   }
   get port(): number {
-   return Number(this.configService.get<number>('app.port'));
+    return Number(this.configService.get<number>('app.port'));
   }
   get secret(): string {
-      return this.configService.get<string>('app.secret');
+    return this.configService.get<string>('app.secret');
+  }
+  get cloudinary(): string {
+    return this.configService.get<string>('app.cloudinary');
   }
 }

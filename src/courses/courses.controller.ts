@@ -39,8 +39,8 @@ export class CoursesController {
 
   @ApiResponse({ status: 200, description: 'Return all courses.' })
   @Get()
-  @UseGuards(AuthGuard(), RolesGuard)
-  @SetMetadata('roles', ['admin', 'instructor', 'student'])
+  // @UseGuards(AuthGuard(), RolesGuard)
+  // @SetMetadata('roles', ['admin', 'instructor', 'student'])
   findAll(): Promise<Course[]> {
     return this.coursesService.findAll();
   }
@@ -50,12 +50,13 @@ export class CoursesController {
   @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor', 'student'])
   @UseInterceptors(ClassSerializerInterceptor)
-  findAllTopics(@Param('id') id: string): Promise<Topic[]> {
+  findAllTopics(@Param('id') id: number): Promise<Topic[]> {
     return this.coursesService.findAllTopics(id);
   }
 
-  // @UseGuards(RolesGuard)
-  // @SetMetadata('roles', ['admin', 'instructor', 'student'])
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor', 'student'])
+  @UseInterceptors(ClassSerializerInterceptor)
   @Get(':id')
   findOne(@Param('id') id: string): Promise<Course> {
     return this.coursesService.findOne(id);
@@ -68,10 +69,40 @@ export class CoursesController {
     return this.coursesService.update(id, courseData);
   }
 
-  @UseGuards(AuthGuard())
+  @UseGuards(AuthGuard(), RolesGuard)
   @SetMetadata('roles', ['admin', 'instructor'])
   @Delete(':id')
   remove(@Param('id') id: string): Promise<void> {
     return this.coursesService.remove(id);
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor'])
+  @Get(':courseId/candidates')
+  @UseInterceptors(ClassSerializerInterceptor)
+  showCandidates(@Param('courseId') courseId: number) {
+    return this.coursesService.showCandidates(courseId);
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor'])
+  @Put(':courseId/students/:studentId')
+  @UseInterceptors(ClassSerializerInterceptor)
+  addStudent(
+    @Param('courseId') courseId: number,
+    @Param('studentId') studentId: number,
+  ) {
+    return this.coursesService.addStudent(courseId, studentId);
+  }
+
+  @UseGuards(AuthGuard(), RolesGuard)
+  @SetMetadata('roles', ['admin', 'instructor'])
+  @Delete(':courseId/students/:studentId')
+  @UseInterceptors(ClassSerializerInterceptor)
+  removeStudent(
+    @Param('courseId') courseId: number,
+    @Param('studentId') studentId: number,
+  ): Promise<void> {
+    return this.coursesService.removeStudent(courseId, studentId);
   }
 }

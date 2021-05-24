@@ -6,11 +6,15 @@ import {
   Entity,
   Unique,
   OneToMany,
+  JoinTable,
+  ManyToMany,
 } from 'typeorm';
 import { Exclude } from 'class-transformer';
 import * as bcrypt from 'bcrypt';
 import { ApiProperty } from '@nestjs/swagger';
 import { Course } from 'src/courses/course.entity';
+import { Result } from 'src/quizzes/result.entity';
+import { Solution } from 'src/topics/solution.entity';
 
 @Entity()
 @Unique(['email'])
@@ -35,11 +39,32 @@ export class User extends BaseEntity {
   @ApiProperty()
   role: string;
 
+  @Column()
+  @ApiProperty()
+  firstName: string;
+
+  @Column()
+  @ApiProperty()
+  lastName: string;
+
+  @Column()
+  isBlocked: boolean;
+
+  @Column({ nullable: true })
+  @ApiProperty()
+  fileUrl: string;
+
   @OneToMany(
     type => Course,
     course => course.author,
   )
   courses: Course[];
+
+  @OneToMany(
+    type => Result,
+    result => result.user,
+  )
+  results: Result[];
 
   async validatePassword(password: string): Promise<boolean> {
     const hash = await bcrypt.hash(password, this.salt);

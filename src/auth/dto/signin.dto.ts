@@ -7,7 +7,7 @@ import {
 } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class CredentialsDto {
+export class SignInDto {
   @ApiProperty()
   @IsString()
   @MinLength(3)
@@ -23,14 +23,4 @@ export class CredentialsDto {
       'The password must be between 8 and 70 characters, one upper case letter and one lower case letter',
   })
   password: string;
-
-  @ApiProperty()
-  @IsString()
-  @MinLength(2)
-  firstName: string;
-
-  @ApiProperty()
-  @IsString()
-  @MinLength(2)
-  lastName: string;
 }
